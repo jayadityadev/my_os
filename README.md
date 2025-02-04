@@ -1,274 +1,165 @@
-# Operating System Development Roadmap
+### ⭐ Hybrid Approach OS Development Roadmap (Rust + Assembly)  
+This roadmap blends **Assembly (for low-level setup)** with **Rust (for safety and high-level abstractions)** to create a **secure, efficient, and maintainable OS**.  
 
-## Phase 1: Development Environment Setup
-1. Install Required Tools
-   - Rust nightly toolchain
-   - QEMU emulator
-   - Build dependencies
-   - Cross-compilation tools
+---
 
-2. Project Structure Setup
-   - Create basic directory structure
-   - Configure Cargo.toml
-   - Set up build scripts
-   - Configure testing framework
-
-## Phase 2: Bare Bones Implementation
-1. Bootloader Integration
-   - Configure bootloader
-   - Set up entry point
-   - Implement basic boot sequence
-   - Handle early initialization
-
-2. Basic Output Capability
-   - Implement VGA text mode driver
-   - Create basic println! macro
-   - Set up debugging infrastructure
-   - Implement early panic handler
-
-## Phase 3: CPU and Hardware Features
-1. Global Descriptor Table (GDT)
-   - Implement GDT structure
-   - Set up segment descriptors
-   - Configure code and data segments
-   - Implement GDT loading
-
-2. Interrupt Management
-   - Create Interrupt Descriptor Table (IDT)
-   - Set up exception handlers
-   - Configure hardware interrupts
-   - Implement interrupt handlers
-   - Configure and initialize PICs
-
-3. CPU Exceptions
-   - Implement double fault handler
-   - Set up page fault handler
-   - Configure breakpoint exceptions
-   - Implement general protection fault handler
-
-## Phase 4: Memory Management
-1. Physical Memory
-   - Implement frame allocator
-   - Handle memory regions
-   - Set up memory map
-   - Configure physical memory management
-
-2. Virtual Memory
-   - Set up page tables
-   - Implement virtual memory mapping
-   - Configure memory protection
-   - Handle address translation
-
-3. Heap Allocation
-   - Implement kernel heap
-   - Set up memory allocator
-   - Configure dynamic memory management
-   - Implement heap-related data structures
-
-## Phase 5: Task Management & IPC
-1. Basic Multitasking
-   - Implement task structure
-   - Create task state segment
-   - Set up context switching
-   - Implement basic scheduler
-
-2. Process Management
-   - Create process abstraction
-   - Implement process creation
-   - Handle process termination
-   - Set up process scheduling
-
-3. Inter-Process Communication (IPC)
-   - Implement message passing system
-   - Set up pipes and shared memory
-   - Implement signals and event handling
-
-## Phase 6: Device Management
-1. Basic Drivers
-   - Implement keyboard driver
-   - Create timer driver
-   - Set up PCI enumeration
-   - Implement basic device management
-
-2. Storage & I/O Drivers
-   - Implement disk driver
-   - Set up SATA/IDE support
-   - Implement basic USB driver
-
-3. Display & GPU Support
-   - Implement advanced VGA modes
-   - Set up framebuffer support
-   - Develop basic GPU acceleration (optional)
-
-## Phase 7: File System
-1. Virtual File System
-   - Create VFS interface
-   - Implement basic file operations
-   - Set up directory structure
-   - Handle file permissions
-
-2. File System Implementation
-   - Implement simple file system (e.g., FAT32)
-   - Create disk layout
-   - Handle file allocation
-   - Implement file operations
-
-## Phase 8: User Space & System Calls
-1. User Mode Support
-   - Implement user mode switching
-   - Set up system calls
-   - Create user space memory management
-   - Handle user processes
-
-2. Shell Implementation
-   - Create basic shell
-   - Implement command parsing
-   - Handle program execution
-   - Set up environment variables
-
-3. Package Management System
-   - Implement basic package manager
-   - Set up software installation system
-   - Create repository system for updates
-
-## Phase 9: Networking
-1. Networking Stack
-   - Implement basic network stack
-   - Set up TCP/IP support
-   - Implement UDP communication
-   - Handle network connections
-
-2. Network Drivers
-   - Implement Ethernet driver
-   - Set up WiFi module (optional)
-   - Create basic networking utilities
-
-## Phase 10: Security & Optimization
-1. Security Features
-   - Implement access control
-   - Set up memory protection
-   - Create security policies
-   - Handle user authentication
-
-2. Performance Optimization
-   - Optimize memory usage
-   - Improve scheduling
-   - Enhance cache usage
-   - Profile and optimize bottlenecks
-
-3. System Stability
-   - Implement error recovery
-   - Add system logging
-   - Create crash handlers
-   - Improve system reliability
-
-## Microkernel vs. Monolithic Approach
-- **Monolithic Kernel**: Faster performance, more integrated features, but harder to maintain.
-- **Microkernel**: More modular, better security, but increased IPC overhead.
-- **Hybrid Kernel** (Recommended for flexibility): Combine monolithic and microkernel features.
-
-## Testing and Documentation
-Throughout all phases:
-1. Unit Testing
-   - Write test cases
-   - Implement test framework
-   - Create integration tests
-   - Perform regression testing
-
-2. Documentation
-   - Write code documentation
-   - Create architecture docs
-   - Document APIs
-   - Maintain development logs
-
-## Tools and Dependencies
-- Rust Toolchain
-  - rustc (nightly)
-  - cargo
-  - rust-src component
-  - llvm-tools-preview
-
-- Development Tools
-  - QEMU
-  - GDB
-  - Bootimage
-  - Cross-compiler toolchain
-
-## Key Implementation Files
+## **🔹 Phase 1: Development Environment Setup**  
+### **Step 1: Install Required Tools**
+✅ **Rust Nightly Toolchain (for `no_std` support)**  
+```bash
+rustup install nightly
+rustup default nightly
+rustup component add rust-src llvm-tools-preview
 ```
-src/
-├── arch/                 # Architecture-specific code
-│   ├── x86_64/          # x86_64 specific implementations
-│   └── aarch64/         # ARM64 specific implementations (if needed)
-├── memory/              # Memory management
-│   ├── frame.rs         # Physical frame allocation
-│   ├── heap.rs          # Heap allocation
-│   └── paging.rs        # Virtual memory management
-├── kernel/              # Core kernel components
-│   ├── interrupts.rs    # Interrupt handling
-│   ├── gdt.rs          # GDT implementation
-│   └── scheduler.rs     # Task scheduler
-├── drivers/             # Device drivers
-│   ├── keyboard.rs      # Keyboard driver
-│   ├── vga.rs          # Display driver
-│   ├── timer.rs        # Timer driver
-│   ├── disk.rs         # Disk driver
-│   └── usb.rs          # USB support
-├── fs/                  # File system implementation
-│   ├── vfs.rs          # Virtual file system
-│   ├── fat32.rs        # FAT32 implementation
-│   ├── ext4.rs         # Ext4 support (optional)
-├── net/                 # Networking stack
-│   ├── tcp.rs          # TCP implementation
-│   ├── udp.rs          # UDP implementation
-│   ├── ethernet.rs     # Ethernet driver
-└── main.rs             # Kernel entry point
+✅ **Assembly Development Tools**  
+- **`nasm`** (for writing x86 assembly):  
+  ```bash
+  sudo apt install nasm  # Ubuntu/Debian
+  sudo pacman -S nasm    # Arch
+  brew install nasm      # MacOS
+  ```
+- **`ld` (GNU linker) for linking Assembly and Rust**  
+- **`objcopy` (binutils) for converting to bootable formats**  
+
+✅ **QEMU Emulator (for running the OS)**  
+```bash
+sudo apt install qemu-system-x86
+```
+✅ **Cross-compilation for Bare Metal x86_64**  
+```bash
+rustup target add x86_64-unknown-none
+cargo install bootimage
 ```
 
-## Development Checklist
+---
 
-- [x] **Phase 1: Development Environment Setup**
-   - [x] Install Required Tools
-   - [x] Project Structure Setup
+## **🔹 Phase 2: Bootloader (Assembly Only)**  
+✅ **Use Assembly to:**
+1. Set up the **real mode** execution environment.
+2. Load the **Global Descriptor Table (GDT)**.
+3. Switch from **16-bit real mode → 32-bit protected mode → 64-bit long mode**.
+4. Load the **kernel** into memory.
 
-- [ ] **Phase 2: Bare Bones Implementation**
-   - [ ] Bootloader Integration
-   - [ ] Basic Output Capability
+✅ **Use Rust to:**
+- Compile and link the Assembly-based bootloader using Rust’s build system.
 
-- [ ] **Phase 3: CPU and Hardware Features**
-   - [ ] Global Descriptor Table (GDT)
-   - [ ] Interrupt Management
-   - [ ] CPU Exceptions
+Example `boot.asm`:  
+```assembly
+[BITS 16]       ; 16-bit real mode
+cli             ; Disable interrupts
+hlt             ; Halt CPU (temporary)
+```
 
-- [ ] **Phase 4: Memory Management**
-   - [ ] Physical Memory
-   - [ ] Virtual Memory
-   - [ ] Heap Allocation
+---
 
-- [ ] **Phase 5: Task Management & IPC**
-   - [ ] Basic Multitasking
-   - [ ] Process Management
-   - [ ] Inter-Process Communication (IPC)
+## **🔹 Phase 3: Kernel Entry Point (Rust + Assembly)**  
+✅ **Use Assembly to:**
+- Define the `_start` entry point.
+- Set up a minimal stack.
 
-- [ ] **Phase 6: Device Management**
-   - [ ] Basic Drivers
-   - [ ] Storage & I/O Drivers
-   - [ ] Display & GPU Support
+✅ **Use Rust to:**
+- Define the **panic handler**.
+- Print text to the screen (VGA buffer).
 
-- [ ] **Phase 7: File System**
-   - [ ] Virtual File System
-   - [ ] File System Implementation
+Example `src/main.rs`:  
+```rust
+#![no_std]
+#![no_main]
 
-- [ ] **Phase 8: User Space & System Calls**
-   - [ ] User Mode Support
-   - [ ] Shell Implementation
-   - [ ] Package Management System
+use core::panic::PanicInfo;
 
-- [ ] **Phase 9: Networking**
-   - [ ] Networking Stack
-   - [ ] Network Drivers
+#[panic_handler]
+fn panic(_info: &PanicInfo) -> ! {
+    loop {}  // Halt execution on panic
+}
 
-- [ ] **Phase 10: Security & Optimization**
-   - [ ] Security Features
-   - [ ] Performance Optimization
-   - [ ] System Stability
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    loop {}  // Halt execution
+}
+```
+
+---
+
+## **🔹 Phase 4: Memory Management (Rust + Inline Assembly)**  
+✅ **Use Assembly to:**
+- Set up **paging** and **virtual memory**.
+- Read/write **control registers (CR3, CR0, etc.)**.
+
+✅ **Use Rust to:**
+- Implement **frame allocation**.
+- Set up **heap memory management**.
+
+Example **Rust inline Assembly for enabling paging**:
+```rust
+unsafe {
+    core::arch::asm!("mov cr3, {}", in(reg) page_directory_addr);
+}
+```
+
+---
+
+## **🔹 Phase 5: CPU and Interrupt Management (Rust + Assembly)**  
+✅ **Use Assembly to:**
+- Set up the **Interrupt Descriptor Table (IDT)**.
+- Enable **interrupts and exceptions**.
+
+✅ **Use Rust to:**
+- Implement **safe interrupt handlers**.
+- Handle **CPU exceptions (Page Faults, General Protection Faults)**.
+
+Example **Interrupt Handler in Rust**:  
+```rust
+use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
+
+lazy_static! {
+    static ref IDT: InterruptDescriptorTable = {
+        let mut idt = InterruptDescriptorTable::new();
+        idt.breakpoint.set_handler_fn(breakpoint_handler);
+        idt
+    };
+}
+
+extern "x86-interrupt" fn breakpoint_handler(_stack_frame: InterruptStackFrame) {
+    println!("Breakpoint Exception");
+}
+```
+
+---
+
+## **🔹 Phase 6: Device Drivers (Rust + Assembly for Low-Level Access)**  
+✅ **Use Assembly to:**
+- Read/write **I/O ports** (e.g., keyboard, timers, disk).
+
+✅ **Use Rust to:**
+- Implement **device drivers** with safe abstractions.
+
+Example **Port I/O in Rust + Assembly**:  
+```rust
+use x86_64::instructions::port::Port;
+
+let mut port = Port::new(0x60);  // Keyboard data port
+let key_code: u8 = unsafe { port.read() };
+```
+
+---
+
+## **🔹 Summary: When to Use Assembly vs. Rust**
+| **Feature**               | **Use Assembly** | **Use Rust** |
+|--------------------------|---------------|-------------|
+| **Bootloader**           | ✅ Yes        | ❌ No       |
+| **CPU Mode Switching**   | ✅ Yes        | ❌ No       |
+| **Interrupt Handlers**   | ⚠ Partially  | ✅ Mostly   |
+| **Memory Management**    | ⚠ Partially  | ✅ Mostly   |
+| **Device Drivers**       | ⚠ Partially  | ✅ Mostly   |
+| **Process Management**   | ❌ No        | ✅ Yes      |
+| **Filesystem & User Space** | ❌ No        | ✅ Yes      |
+
+---
+
+### **🔹 Conclusion**  
+✅ **Use Assembly for:** **Booting, CPU setup, and critical low-level code**.  
+✅ **Use Rust for:** **Kernel logic, drivers, memory management, and user-space**.  
+
+This roadmap **keeps the OS secure, fast, and portable** while leveraging **Rust’s memory safety and Assembly’s low-level power**. 🚀
+

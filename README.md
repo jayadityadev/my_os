@@ -163,3 +163,5 @@ let key_code: u8 = unsafe { port.read() };
 
 This roadmap **keeps the OS secure, fast, and portable** while leveraging **Rust’s memory safety and Assembly’s low-level power**. 🚀
 
+Learning Path [https://chatgpt.com/share/67a22f7f-2724-8011-a465-9247593f007a]
+
